@@ -12,6 +12,10 @@ def main(config):
 
         flip(config)
 
+    elif config['mode'] == 'plot':
+
+        plots(config)
+
 if __name__ == '__main__':
     config = get_parameters('home')
     main(config)
