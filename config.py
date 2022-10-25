@@ -6,14 +6,16 @@ def get_parameters(env):
 
     plot_mode = 'reg' # available modes: 'flipped', 'reflex', 'reg'
 
-    ref_patient  = 'FCD020_MR1'
-    ref_study    = '7'
-    ref_filename = 'DICOM_t1_mprage_sag_p2_iso_20210902014629_7.nii.gz'
+    ref_patient  = 'FCD004_MR1'
+    ref_study    = '503'
+    ref_filename = '503_MPR_AX_T1_20181102190723_503.nii.gz'
 
-    mod_patient = 'FCD013_MR1'
-    mod_study   = '100'
-    mod_mri     = 'DICOM_t1_mprage_sag_p2_20220129173507_100'
-    mod_msk     = 'DISPLASIA.nii.gz'
+    # En modo 'reg' : Imagen y mascara que se va a registrar respecto a la referencia
+    # En modo 'flip': Imagen respecto a la cual se va a orientar la mascara
+    unmod_patient  = 'FCD012_MR1'
+    unmod_study    = '11'
+    unmod_mri      = 'DICOM_t1_mprage_sag_p2_iso_20220105171437_11.nii.gz'
+    unmod_msk      = 'Displasia.nii.gz'
 
     transforms = ['Translation', # 0
                   'Rigid',       # 1
@@ -45,48 +47,71 @@ def get_parameters(env):
 
     # Ruta de la imagen a modificar
     mod_mri = os.path.join(root_path,
-                           mod_patient,
-                           mod_study,
-                           mod_mri
+                           unmod_patient,
+                           unmod_study,
+                           unmod_mri
     )
 
     # Ruta de la mascara sin modificar
     mod_msk = os.path.join(root_path,
-                           mod_patient,
-                           mod_study,
-                           mod_msk
+                           unmod_patient,
+                           unmod_study,
+                           unmod_msk
     )
 
     # Ruta de salida
-
     if mode == 'reg':
         
         out_dir = os.path.join(root_path,
                                'Reg_ds',
-                               mod_patient,
-                               mod_study,
+                               unmod_patient,
+                               unmod_study,
         )
 
-        mod_mri_fn = 'Reg-' + mod_mri
-        mod_msk_fn = 'Reg-' + mod_msk
+        mod_mri_fn = 'Reg-' + unmod_mri
+        mod_msk_fn = 'Reg-' + unmod_msk
 
     elif mode == 'flip':
 
         out_dir = os.path.join(root_path,
-                               mod_patient,
-                               mod_study,
+                               unmod_patient,
+                               unmod_study,
         )
 
-        mod_mri_fn = 'Flipped-' + mod_mri
-        mod_msk_fn = 'Flipped-' + mod_msk
+        mod_mri_fn = 'Flipped-' + unmod_mri
+        mod_msk_fn = 'Flipped-' + unmod_msk
+
+    elif mode == 'plot':
+
+        if plot_mode == 'reg':
+
+            out_dir = os.path.join(root_path,
+                                   'Reg_ds',
+                                   unmod_patient,
+                                   unmod_study,
+            )
+
+            mod_mri_fn = 'Reg-' + unmod_mri
+            mod_msk_fn = 'Reg-' + unmod_msk
+
+        elif plot_mode == 'flipped':
+
+            out_dir = os.path.join(root_path,
+                                   unmod_patient,
+                                   unmod_study,
+            )
+
+            mod_mri_fn = 'Flipped-' + unmod_mri
+            mod_msk_fn = 'Flipped-' + unmod_msk
+
 
     return {'mode'      : mode,
+            'plot_mode' : plot_mode,
             'transforms': transforms, 
             'ref_mri'   : ref_mri, 
             'mod_mri'   : mod_mri, 
             'mod_msk'   : mod_msk, 
-            'out_dir'   : out_dir
+            'out_dir'   : out_dir,
             'mod_mri_fn': mod_mri_fn,
-            'mod_msk_fn': mod_msk_fn
-
+            'mod_msk_fn': mod_msk_fn,
            }

@@ -2,53 +2,42 @@ import os
 import numpy as np
 import nibabel as nib
 from ants import image_read
-from utils import plot_fcd, plot_rfx, plot_flipped
+from utils import plot_fcd, plot_rfx, plot_flipped, plot_unreg, plot_reg
 
 
 def plots(config):
 
     if config['plot_mode'] == 'reg':
 
-        print(f'Transform: {transform}\n')
-
-        # Ruta de la imagen registrada
-        reg_mri = os.path.join('/media', 
-                               'davidjm', 
-                               'Disco_Compartido', 
-                               'david', 
-                               'datasets', 
-                               'IATM-Dataset', 
-                               'Reg_ds', 
-                               '7', 
-                               'Reg-DISPLASIA.nii.gz'
-        )
-
         # Cargar las imagenes
-        ref = nib.load(config['ref_mri']).get_fdata()#np.int16()
-        #ref = image_read(ref_mri)
-        unreg = nib.load(config['mod_mri']).get_fdata().squeeze(3)
-        #unreg = image_read(unreg_mri)
-        reg = nib.load(os.path.join(config['out_dir'], config['mod_mri_fn'])).get_fdata()
-        #reg = image_read(reg_mri)
-        reg_msk = nib.load(os.path.join(config['out_dir'], config['mod_msk_fn'])).get_fdata()
+        ref       = nib.load(config['ref_mri']).get_fdata()#np.int16()
+        unreg     = nib.load(config['mod_mri']).get_fdata()#.squeeze(3)
+        unreg_msk = nib.load(config['mod_msk']).get_fdata()
+        reg       = nib.load(os.path.join(config['out_dir'], config['mod_mri_fn'])).get_fdata()
+        reg_msk   = nib.load(os.path.join(config['out_dir'], config['mod_msk_fn'])).get_fdata()
 
-        print(f'{ref.shape}, {unreg.shape}, {reg.shape}\n')
+        print(f'ref = {ref.shape}, unreg = {unreg.shape}, reg = {reg.shape}\n')
 
-        unreg = np.transpose(unreg, (2, 0, 1))
+        #unreg = np.transpose(unreg, (2, 0, 1))
 
-        for slice_ in range(ref.shape[2]):
+        for slice_ in range(unreg_msk.shape[2]):
 
-            if unreg[:, :, slice_].sum() > 0:
+            if unreg_msk[:, :, slice_].sum() > 0:
 
-                #print(f'{slice_}')
-                #plot_fcd(ref, unreg, reg, syn, slice_)
-                pass
+                print(f'{slice_}')
+                plot_unreg(unreg, unreg_msk, slice_)
 
-            elif reg[:, :, slice_].sum() > 0:
+        for slice_ in range(reg_msk.shape[2]):
 
-                #print(f'{slice_}')
-                plot_fcd(ref, unreg, reg, reg_msk, slice_, 'reg')
-                #pass
+            if reg_msk[:, :, slice_].sum() >= 0:
+
+                print(f'{slice_}')
+                plot_reg(reg, reg_msk, slice_)
+
+            # elif reg_msk[:, :, slice_].sum() > 0:
+
+            #     print(f'{slice_}')
+            #     plot_fcd(ref, unreg, reg, reg_msk, slice_, 'reg')
 
     elif config['plot_mode'] == 'reflex':
 

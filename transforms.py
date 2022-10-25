@@ -8,16 +8,19 @@ from ants import image_read, image_write, registration, apply_transforms, reflec
 def flip(config):
 
     # Cargar las imagenes
-    unflp_ = nib.load(config['mod_mri'])
-    unflp  = unflp_.get_fdata().squeeze(3)
+    unflp_ = nib.load(config['mod_msk'])
+    try:
+        unflp = unflp_.get_fdata().squeeze(3)
+    except:
+        unflp = unflp_.get_fdata()
 
     if 'FCD020_MR1' in config['mod_mri']:
 
         unflp  = np.transpose(unflp, (2, 0, 1))
         unflp1 = np.flip(unflp, (1, 0, 2))
 
-    elif 'FCD013_MR1' in config['mod_mri']:
-        
+    elif 'FCD013_MR1' or 'FCD012_MR1' in config['mod_mri']:
+
         unflp1 = np.flip(unflp, (0, 1))
 
     Path(os.path.join(config['out_dir'])).mkdir(parents=True, exist_ok=True)
@@ -35,7 +38,7 @@ def registrate(config):
     # Registrar imagen
     rs2_img = registration(fixed=ref, 
                            moving=reg_img, 
-                           type_of_transform=config['transforms'][6]
+                           type_of_transform=config['transforms'][4]
     )
 
     rs = apply_transforms(fixed=ref, 
@@ -47,7 +50,7 @@ def registrate(config):
     # Registrar etiqueta
     rs2_msk = registration(fixed=ref, 
                            moving=reg_msk, 
-                           type_of_transform=config['transforms'][6]
+                           type_of_transform=config['transforms'][4]
     )
 
     rs_ = apply_transforms(fixed=ref, 

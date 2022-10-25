@@ -1,6 +1,7 @@
 import os
 from config import get_parameters
 from transforms import flip, registrate
+from plots import plots
 
 def main(config):
 
@@ -17,5 +18,5 @@ def main(config):
         plots(config)
 
 if __name__ == '__main__':
-    config = get_parameters('home')
+    config = get_parameters('lab')
     main(config)
