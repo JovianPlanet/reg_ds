@@ -14,12 +14,12 @@ def flip(config):
     except:
         unflp = unflp_.get_fdata()
 
-    if 'FCD020_MR1' in config['mod_mri']:
+    if 'FCD020_MR1' in config['mod_mri']: # Modo (-Y,-Z,-X)
 
         unflp  = np.transpose(unflp, (2, 0, 1))
         unflp1 = np.flip(unflp, (1, 0, 2))
 
-    elif 'FCD013_MR1' or 'FCD012_MR1' in config['mod_mri']:
+    elif 'FCD013_MR1' or 'FCD012_MR1' in config['mod_mri']: # Modo 13:(-X,-Y,Z), 12:(-X,-Y,-Z)
 
         unflp1 = np.flip(unflp, (0, 1))
 
@@ -64,7 +64,6 @@ def registrate(config):
     image_write(rs_, os.path.join(config['out_dir'], config['mod_msk_fn']), ri=False)
 
 '''
-kevin - aumentar datos
 terraza = transfer
 registrar
 '''

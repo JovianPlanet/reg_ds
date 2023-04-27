@@ -87,3 +87,16 @@ def plots(config):
             if flip[:, :, slice_].sum() > 0:
 
                 plot_flipped(ref, flip, slice_, str(slice_))
+
+
+    elif config['plot_mode'] == 'originals':
+
+        # Cargar las imagenes
+        mri = nib.load(config['mri'])
+        mri = mri.get_fdata()
+        msk = nib.load(config['msk'])
+        msk = msk.get_fdata()
+        
+        for s in range(mri.shape[2]):
+            if np.any(msk[:,:,s]):
+                plot_unreg(mri, msk, s, offset=False)

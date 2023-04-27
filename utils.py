@@ -44,7 +44,7 @@ def plot_fcd(ref, ureg, reg, syn, s, title):
     fig.tight_layout()
     plt.show()
 
-def plot_unreg(img, msk, s):
+def plot_unreg(img, msk, s, offset=False):
 
     fig = plt.figure(figsize=(16, 16))
     fig.suptitle(f'Slice = {s}', fontsize=14)
@@ -52,16 +52,23 @@ def plot_unreg(img, msk, s):
 
     ax1 = fig.add_subplot(1, 3, 1)
     ax1.axis("off")
-    ax1.imshow(img[:, :, img.shape[2]-s-1], cmap="gray")
+    #ax1.imshow(img[:, :, img.shape[2]-s-1], cmap="gray")
 
     ax2 = fig.add_subplot(1, 3, 2)
     ax2.axis("off")
     ax2.imshow(msk[:, :, s], cmap="gray")
 
-    ax2 = fig.add_subplot(1, 3, 3)
-    ax2.axis("off")
-    ax2.imshow(img[:, :, img.shape[2]-s-1], cmap="gray")
-    ax2.imshow(msk[:, :, s], cmap='gray', alpha=0.5)
+    ax3 = fig.add_subplot(1, 3, 3)
+    ax3.axis("off")
+
+    if offset:
+        ax1.imshow(img[:, :, img.shape[2]-s-1], cmap="gray")
+        ax3.imshow(img[:, :, img.shape[2]-s-1], cmap="gray")
+        ax3.imshow(msk[:, :, s], cmap='gray', alpha=0.2)
+    else:
+        ax1.imshow(img[:, :, s], cmap="gray")
+        ax3.imshow(img[:, :, s], cmap="gray")
+        ax3.imshow(msk[:, :, s], cmap='gray', alpha=0.2)
 
     fig.tight_layout()
     plt.show()

@@ -4,11 +4,13 @@ def get_parameters(env):
 
     mode = 'flip' # available modes: 'reg', 'flip', 'plot'
 
-    plot_mode = 'reg' # available modes: 'flipped', 'reflex', 'reg'
+    plot_mode = 'originals' # available modes: 'flipped', 'reflex', 'reg', 'originals'
 
     ref_patient  = 'FCD004_MR1'
     ref_study    = '503'
     ref_filename = '503_MPR_AX_T1_20181102190723_503.nii.gz'
+
+    ref_info = ['patient':ref_patient, 'study':ref_study, 'mri':ref_filename]
 
     # En modo 'reg' : Imagen y mascara que se va a registrar respecto a la referencia
     # En modo 'flip': Imagen respecto a la cual se va a orientar la mascara
@@ -16,6 +18,8 @@ def get_parameters(env):
     unmod_study    = '11'
     unmod_mri      = 'DICOM_t1_mprage_sag_p2_iso_20220105171437_11.nii.gz'
     unmod_msk      = 'Displasia.nii.gz'
+
+    unmod_info = ['patient':unmod_patient, 'study':unmod_study, 'mri':unmod_mri, 'msk':unmod_msk]
 
     transforms = ['Translation', # 0
                   'Rigid',       # 1
@@ -104,6 +108,34 @@ def get_parameters(env):
             mod_mri_fn = 'Flipped-' + unmod_mri
             mod_msk_fn = 'Flipped-' + unmod_msk
 
+        elif plot_mode == 'originals':
+
+            root_path = '/media/davidjm/Disco_Compartido/david/torch-transfer_fcd_seg/data/raw/'
+
+            ori_patient  = 'FCD012_MR1'
+            ori_study    = '9'
+            ori_filename = 'DICOM_t1_mprage_sag_p2_iso_20220105171437_9.nii.gz'
+
+            mri = os.path.join(root_path,
+                                ori_patient,
+                                ori_study,
+                                ori_filename,
+            )
+
+            msk_filename = 'DISPLASIA.nii.gz'
+
+            msk = os.path.join(root_path,
+                                ori_patient,
+                                ori_study,
+                                msk_filename,
+            )
+
+            return {'mode'      : mode,
+                    'plot_mode' : plot_mode,
+                    'mri'       : mri, 
+                    'msk'       : msk, 
+                   }
+
 
     return {'mode'      : mode,
             'plot_mode' : plot_mode,
@@ -114,4 +146,6 @@ def get_parameters(env):
             'out_dir'   : out_dir,
             'mod_mri_fn': mod_mri_fn,
             'mod_msk_fn': mod_msk_fn,
+            'ref_info'  : ref_info,
+            'unmod_info': unmod_info
            }
