@@ -14,17 +14,65 @@ def flip(config):
     except:
         unflp = unflp_.get_fdata()
 
-    if 'FCD020_MR1' in config['mod_mri']: # Modo (-Y,-Z,-X)
+    # Modo (-Y,-Z,-X)
+    if 'FCD020_MR1' in config['unmod_info']['patient'] and '7' in config['unmod_info']['study']: # Modo (-Y,-Z,-X)
 
         unflp  = np.transpose(unflp, (2, 0, 1))
         unflp1 = np.flip(unflp, (1, 0, 2))
 
-    elif 'FCD013_MR1' or 'FCD012_MR1' in config['mod_mri']: # Modo 13:(-X,-Y,Z), 12:(-X,-Y,-Z)
+    # Modo (-Y,-Z,-X)
+    elif 'FCD012_MR1' in config['unmod_info']['patient'] and '9' in config['unmod_info']['study']:
+
+        unflp  = np.transpose(unflp, (2, 0, 1))
+        unflp1 = np.flip(unflp, (1, 0, 2))
+
+    # Modo (-Y,-Z,-X)
+    elif 'FCD018_MR1' in config['unmod_info']['patient'] and '29' in config['unmod_info']['study']:
+
+        unflp  = np.transpose(unflp, (2, 0, 1))
+        unflp1 = np.flip(unflp, (1, 0, 2))
+
+    # Modo (-Y,-Z,-X)
+    elif 'FCD024_MR1' in config['unmod_info']['patient'] and '601_VOL_T1_SAG' in config['unmod_info']['study']:
+
+        unflp  = np.transpose(unflp, (2, 0, 1))
+        unflp1 = np.flip(unflp, (1, 0, 2))
+
+    # Modo (-Y,-Z,-X)
+    elif 'FCD039_MR1' in config['unmod_info']['patient']:# and '601_VOL_T1_SAG' in config['unmod_info']['study']:
+
+        unflp  = np.transpose(unflp, (2, 0, 1))
+        unflp1 = np.flip(unflp, (1, 0, 2))
+
+    # Modo (-Y,-Z,-X)
+    elif 'FCD042_MR1' in config['unmod_info']['patient']:# and '601_VOL_T1_SAG' in config['unmod_info']['study']:
+
+        unflp  = np.transpose(unflp, (2, 0, 1))
+        unflp1 = np.flip(unflp, (1, 0, 2))
+
+    ################
+
+    # Modo:(-X,-Y,Z)
+    elif 'FCD013_MR1' in config['unmod_info']['patient'] and '100' in config['unmod_info']['study']: 
+
+        unflp1 = np.flip(unflp, (0, 1))
+
+    # Modo:(-X,-Y,-Z)
+    elif 'FCD012_MR1' in config['unmod_info']['patient'] and '11' in config['unmod_info']['study']: 
+
+        unflp1 = np.flip(unflp, (0, 1))
+
+    # Modo:(-X,-Y,Z)
+    elif 'FCD036_MR1' in config['unmod_info']['patient'] and '401_VOL_AX_T1_CRANEO' in config['unmod_info']['study']: 
 
         unflp1 = np.flip(unflp, (0, 1))
 
     Path(os.path.join(config['out_dir'])).mkdir(parents=True, exist_ok=True)
-    img = nib.Nifti1Image(np.int16(unflp1), unflp_.affine)
+    
+    try:
+        img = nib.Nifti1Image(np.int16(unflp1), unflp_.affine)
+    except:
+        print(f'No se encontró ninguna imagen')
     nib.save(img, os.path.join(config['out_dir'], config['mod_msk_fn']))
 
 

@@ -92,9 +92,9 @@ def plots(config):
     elif config['plot_mode'] == 'originals':
 
         # Cargar las imagenes
-        mri = nib.load(config['mri'])
+        mri = nib.load(config['mod_mri'])
         mri = mri.get_fdata()
-        msk = nib.load(config['msk'])
+        msk = nib.load(config['mod_msk'])
         msk = msk.get_fdata()
         
         for s in range(mri.shape[2]):

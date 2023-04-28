@@ -2,7 +2,7 @@ import os
 
 def get_parameters(env):
 
-    mode = 'flip' # available modes: 'reg', 'flip', 'plot'
+    mode = 'plot' # available modes: 'reg', 'flip', 'plot'
 
     plot_mode = 'originals' # available modes: 'flipped', 'reflex', 'reg', 'originals'
 
@@ -10,16 +10,18 @@ def get_parameters(env):
     ref_study    = '503'
     ref_filename = '503_MPR_AX_T1_20181102190723_503.nii.gz'
 
-    ref_info = ['patient':ref_patient, 'study':ref_study, 'mri':ref_filename]
+    ref_info = {'patient':ref_patient, 'study':ref_study, 'mri':ref_filename}
 
     # En modo 'reg' : Imagen y mascara que se va a registrar respecto a la referencia
     # En modo 'flip': Imagen respecto a la cual se va a orientar la mascara
-    unmod_patient  = 'FCD012_MR1'
-    unmod_study    = '11'
-    unmod_mri      = 'DICOM_t1_mprage_sag_p2_iso_20220105171437_11.nii.gz'
-    unmod_msk      = 'Displasia.nii.gz'
+    unmod_patient  = 'FCD042_MR1'
+    unmod_study    = '401_VOL_AX_T1_CRANEO'
+    unmod_mri      = 'FCD042-MR1_t1_mprage_sag_p2_iso_20220604183522_17.nii.gz'
+    #unmod_msk      = 'Displasia.nii.gz'
+    #unmod_msk      = 'DISPLASIA.nii.gz'
+    unmod_msk      = 'FCD042_roi.nii.gz'
 
-    unmod_info = ['patient':unmod_patient, 'study':unmod_study, 'mri':unmod_mri, 'msk':unmod_msk]
+    unmod_info = {'patient':unmod_patient, 'study':unmod_study, 'mri':unmod_mri, 'msk':unmod_msk}
 
     transforms = ['Translation', # 0
                   'Rigid',       # 1
@@ -36,7 +38,8 @@ def get_parameters(env):
 
     if env == 'lab':
 
-        root_path = '/media/davidjm/Disco_Compartido/david/datasets/IATM-Dataset/'
+        #root_path = '/media/davidjm/Disco_Compartido/david/datasets/IATM-Dataset/'
+        root_path = '/media/davidjm/Disco_Compartido/david/torch-transfer_fcd_seg/data/raw/'
 
     elif env == 'home':
 
@@ -52,14 +55,14 @@ def get_parameters(env):
     # Ruta de la imagen a modificar
     mod_mri = os.path.join(root_path,
                            unmod_patient,
-                           unmod_study,
+                           #unmod_study,
                            unmod_mri
     )
 
     # Ruta de la mascara sin modificar
     mod_msk = os.path.join(root_path,
                            unmod_patient,
-                           unmod_study,
+                           #unmod_study,
                            unmod_msk
     )
 
@@ -79,7 +82,7 @@ def get_parameters(env):
 
         out_dir = os.path.join(root_path,
                                unmod_patient,
-                               unmod_study,
+                               #unmod_study,
         )
 
         mod_mri_fn = 'Flipped-' + unmod_mri
@@ -110,31 +113,20 @@ def get_parameters(env):
 
         elif plot_mode == 'originals':
 
-            root_path = '/media/davidjm/Disco_Compartido/david/torch-transfer_fcd_seg/data/raw/'
+            out_dir = ''
+            mod_mri_fn = ''
+            mod_msk_fn = ''
 
-            ori_patient  = 'FCD012_MR1'
-            ori_study    = '9'
-            ori_filename = 'DICOM_t1_mprage_sag_p2_iso_20220105171437_9.nii.gz'
+            #msk_filename = 'Flipped-DISPLASIA.nii.gz'
+            #msk_filename = 'Flipped-Displasia.nii.gz'
+            #msk_filename = 'Displasia.nii.gz'
+            msk_filename = 'Flipped-FCD042_roi.nii.gz'
 
-            mri = os.path.join(root_path,
-                                ori_patient,
-                                ori_study,
-                                ori_filename,
+            mod_msk = os.path.join(root_path,
+                                    unmod_patient,
+                                    #unmod_study,
+                                    msk_filename,
             )
-
-            msk_filename = 'DISPLASIA.nii.gz'
-
-            msk = os.path.join(root_path,
-                                ori_patient,
-                                ori_study,
-                                msk_filename,
-            )
-
-            return {'mode'      : mode,
-                    'plot_mode' : plot_mode,
-                    'mri'       : mri, 
-                    'msk'       : msk, 
-                   }
 
 
     return {'mode'      : mode,
