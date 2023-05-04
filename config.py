@@ -1,27 +1,17 @@
 import os
 
-def get_parameters(env):
+def get_parameters(mode, env):
 
-    mode = 'plot' # available modes: 'reg', 'flip', 'plot'
+    #mode = 'reg' # available modes: 'reg', 'flip', 'plot'
 
-    plot_mode = 'originals' # available modes: 'flipped', 'reflex', 'reg', 'originals'
+    if env == 'lab':
 
-    ref_patient  = 'FCD004_MR1'
-    ref_study    = '503'
-    ref_filename = '503_MPR_AX_T1_20181102190723_503.nii.gz'
+        #root_path = '/media/davidjm/Disco_Compartido/david/datasets/IATM-Dataset/'
+        root_path = '/media/davidjm/Disco_Compartido/david/torch-transfer_fcd_seg/data/raw/'
 
-    ref_info = {'patient':ref_patient, 'study':ref_study, 'mri':ref_filename}
+    elif env == 'home':
 
-    # En modo 'reg' : Imagen y mascara que se va a registrar respecto a la referencia
-    # En modo 'flip': Imagen respecto a la cual se va a orientar la mascara
-    unmod_patient  = 'FCD042_MR1'
-    unmod_study    = '401_VOL_AX_T1_CRANEO'
-    unmod_mri      = 'FCD042-MR1_t1_mprage_sag_p2_iso_20220604183522_17.nii.gz'
-    #unmod_msk      = 'Displasia.nii.gz'
-    #unmod_msk      = 'DISPLASIA.nii.gz'
-    unmod_msk      = 'FCD042_roi.nii.gz'
-
-    unmod_info = {'patient':unmod_patient, 'study':unmod_study, 'mri':unmod_mri, 'msk':unmod_msk}
+        root_path = '/media/david/Ubuntu-Datos/Maestria/datasets/IATM/DISPLASIAS/'
 
     transforms = ['Translation', # 0
                   'Rigid',       # 1
@@ -36,14 +26,12 @@ def get_parameters(env):
                   'ElasticSyN'   # 10
                  ]
 
-    if env == 'lab':
+    ref_patient  = 'FCD041_MR1'
+    ref_study    = '4'
+    ref_filename = 'FCD041-MR1_t2_space_da-fl_sag_p2_20220129173507_4.nii.gz'
 
-        #root_path = '/media/davidjm/Disco_Compartido/david/datasets/IATM-Dataset/'
-        root_path = '/media/davidjm/Disco_Compartido/david/torch-transfer_fcd_seg/data/raw/'
-
-    elif env == 'home':
-
-        root_path = '/media/david/Ubuntu-Datos/Maestria/datasets/IATM/DISPLASIAS/'
+    ref_info = {'patient':ref_patient, 'study':ref_study, 'mri':ref_filename}
+    
 
     # Ruta de la imagen de referencia
     ref_mri = os.path.join(root_path,
@@ -52,43 +40,104 @@ def get_parameters(env):
                            ref_filename
     )
 
-    # Ruta de la imagen a modificar
-    mod_mri = os.path.join(root_path,
-                           unmod_patient,
-                           #unmod_study,
-                           unmod_mri
-    )
 
-    # Ruta de la mascara sin modificar
-    mod_msk = os.path.join(root_path,
-                           unmod_patient,
-                           #unmod_study,
-                           unmod_msk
-    )
-
-    # Ruta de salida
     if mode == 'reg':
-        
-        out_dir = os.path.join(root_path,
-                               'Reg_ds',
+
+        reg_mask = False
+
+        # En modo 'reg' : Imagen y mascara que se va a registrar respecto a la referencia
+        unmod_patient  = 'FCD041_MR1'
+        unmod_study    = '3'
+        unmod_mri      = 'FCD041-MR1_t1_mprage_sag_p2_20220129173507_3.nii.gz'#'Reg-503_MPR_AX_T1_20181102190723_503.nii.gz'#
+        unmod_msk      = 'FCD040_roi.nii.gz' # Displasia FCD042_roi DISPLASIA
+
+        # Ruta de la imagen a modificar
+        mod_mri = os.path.join(root_path,
                                unmod_patient,
                                unmod_study,
+                               unmod_mri
+        )
+
+        # Ruta de la mascara sin modificar
+        mod_msk = os.path.join(root_path,
+                               ref_patient, # unmod_patient
+                               ref_study,   # unmod_study
+                               unmod_msk
+        )
+        
+        out_dir = os.path.join(root_path,
+                               unmod_patient,
+                               'Reg',
         )
 
         mod_mri_fn = 'Reg-' + unmod_mri
         mod_msk_fn = 'Reg-' + unmod_msk
 
+        return {'mode'      : mode,
+                'transforms': transforms, 
+                'ref_mri'   : ref_mri, 
+                'mod_mri'   : mod_mri, 
+                'mod_msk'   : mod_msk, 
+                'out_dir'   : out_dir,
+                'mod_mri_fn': mod_mri_fn,
+                'mod_msk_fn': mod_msk_fn,
+                'reg_mask'  : reg_mask,
+               }
+
     elif mode == 'flip':
+
+        # En modo 'flip' : Imagen y mascara que se va a orientar respecto a la referencia
+        unmod_patient  = 'FCD041_MR1'
+        unmod_study    = '4'
+        unmod_msk      = 'FCD041_roi.nii.gz' # DISPLASIA # FCD042_roi
+
+        unmod_info = {'patient':unmod_patient, 'study':unmod_study, 'msk':unmod_msk}
+
+        # Ruta de la mascara sin modificar
+        mod_msk = os.path.join(root_path,
+                               unmod_patient, 
+                               unmod_study,   
+                               unmod_msk
+        )
 
         out_dir = os.path.join(root_path,
                                unmod_patient,
-                               #unmod_study,
+                               unmod_study,
         )
 
-        mod_mri_fn = 'Flipped-' + unmod_mri
+        #mod_mri_fn = 'Flipped-' + unmod_mri
         mod_msk_fn = 'Flipped-' + unmod_msk
 
+        return {'mode'      : mode,
+                'mod_msk'   : mod_msk, 
+                'unmod_info': unmod_info,
+                'out_dir'   : out_dir,
+                'mod_msk_fn': mod_msk_fn,
+               }
+
     elif mode == 'plot':
+
+        plot_mode = 'originals' # available modes: 'flipped', 'reflex', 'reg', 'originals'
+
+        # En modo 'plot' : Imagen y mascara que se va a registrar respecto a la referencia
+        unmod_patient  = 'FCD041_MR1'
+        unmod_study    = 'Reg'
+        unmod_mri      = 'Reg-FCD041-MR1_t1_mprage_sag_p2_20220129173507_3.nii.gz'#'Reg-503_MPR_AX_T1_20181102190723_503.nii.gz'#
+        unmod_msk      = 'Flipped-FCD041_roi.nii.gz' # Displasia # FCD042_roi # Flipped-DISPLASIA
+
+        # Ruta de la imagen a modificar
+        mod_mri = os.path.join(root_path,
+                               unmod_patient,
+                               unmod_study,
+                               unmod_mri
+        )
+
+        # Ruta de la mascara sin modificar
+        mod_msk = os.path.join(root_path,
+                               unmod_patient, # 
+                               unmod_study,   # 
+                               unmod_msk
+        )
 
         if plot_mode == 'reg':
 
@@ -117,27 +166,12 @@ def get_parameters(env):
             mod_mri_fn = ''
             mod_msk_fn = ''
 
-            #msk_filename = 'Flipped-DISPLASIA.nii.gz'
-            #msk_filename = 'Flipped-Displasia.nii.gz'
-            #msk_filename = 'Displasia.nii.gz'
-            msk_filename = 'Flipped-FCD042_roi.nii.gz'
-
-            mod_msk = os.path.join(root_path,
-                                    unmod_patient,
-                                    #unmod_study,
-                                    msk_filename,
-            )
-
-
-    return {'mode'      : mode,
-            'plot_mode' : plot_mode,
-            'transforms': transforms, 
-            'ref_mri'   : ref_mri, 
-            'mod_mri'   : mod_mri, 
-            'mod_msk'   : mod_msk, 
-            'out_dir'   : out_dir,
-            'mod_mri_fn': mod_mri_fn,
-            'mod_msk_fn': mod_msk_fn,
-            'ref_info'  : ref_info,
-            'unmod_info': unmod_info
-           }
+        return {'mode'      : mode,
+                'plot_mode' : plot_mode,
+                'ref_mri'   : ref_mri, 
+                'mod_mri'   : mod_mri, 
+                'mod_msk'   : mod_msk, 
+                'out_dir'   : out_dir,
+                'mod_mri_fn': mod_mri_fn,
+                'mod_msk_fn': mod_msk_fn,
+               }
