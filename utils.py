@@ -180,3 +180,27 @@ def plot_flipped(ref, flip, s, title):
 
     fig.tight_layout()
     plt.show()
+
+
+def plot_single(img, s, title, overlay=None, fn=''):
+
+    fig = plt.figure(figsize=(16, 16))
+    #fig.suptitle(f'{s}', fontsize=14)
+
+    ax1 = fig.add_subplot(1, 1, 1)
+    ax1.axis("off")
+
+    if overlay is None:
+        ax1.imshow(img[:, :, s], cmap="gray")
+        ax1.figure.savefig(fn, dpi=300, format='pdf', 
+                    bbox_inches='tight', facecolor='auto', edgecolor='auto',
+        )
+    else:
+        ax1.imshow(img[:, :, s], cmap="gray")
+        ax1.imshow(overlay[:, :, s], cmap='gray', alpha=0.5)
+        ax1.figure.savefig(fn, dpi=300, format='pdf', 
+                    bbox_inches='tight', facecolor='auto', edgecolor='auto',
+        )
+
+    fig.tight_layout()
+    plt.show()

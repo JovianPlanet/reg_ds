@@ -137,8 +137,9 @@ def flip(config):
     # Modo:(-X,-Y,-Z)
     elif 'FCD006_MR1' in config['unmod_info']['patient'] and '1002' in config['unmod_info']['study']: 
 
+        #unflp1 = np.flip(unflp, (0, 1))
         unflp1 = np.fliplr(unflp)#np.flip(unflp, (0, 1))#
-        #unflp1 = np.flipud(unflp)
+        #unflp1 = np.flipud(unflp1)
 
     # Modo:(-X,-Y,Z) # Este estudio primero debe registrarse la T1 respecto de la flair, luego flippear la displasia
     elif 'FCD007_MR1' in config['unmod_info']['patient'] and '801' in config['unmod_info']['study']: 

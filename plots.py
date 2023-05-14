@@ -2,7 +2,7 @@ import os
 import numpy as np
 import nibabel as nib
 from ants import image_read
-from utils import plot_fcd, plot_rfx, plot_flipped, plot_unreg, plot_reg
+from utils import plot_fcd, plot_rfx, plot_flipped, plot_unreg, plot_reg, plot_single
 
 
 def plots(config):
@@ -100,3 +100,18 @@ def plots(config):
         for s in range(mri.shape[2]):
             if np.any(msk[:,:,s]):
                 plot_unreg(mri, msk, s, offset=False)
+
+    elif config['plot_mode'] == 'single':
+
+        # Cargar las imagenes
+        mri = nib.load(config['mod_mri'])
+        mri = mri.get_fdata()
+        msk = nib.load(config['mod_msk'])
+        msk = msk.get_fdata()
+
+        for s in range(mri.shape[2]):
+            if np.any(msk[:,:,s]):
+                plot_single(mri, s, 'MRI (secuencia T1)', overlay=None, fn=os.path.join(config['out_dir'],'mri'))
+                plot_single(msk, s, 'Máscara', overlay=None, fn=os.path.join(config['out_dir'],'msk'))
+                plot_single(mri, s, 'ḾRI + Máscara', overlay=msk, fn=os.path.join(config['out_dir'],'overlay'))
+                
